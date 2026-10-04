@@ -24,6 +24,8 @@ tracking what's actually sticking.
 - **Spaced repetition review** (a small SM-2 scheduler) so the words come back at the right time.
 - **Progress that means something** — retention %, cards due now, matured cards, turns practised.
 - **A durable memory of weak spots** — terms the learner keeps lapsing on are woven back into future prompts.
+- **A friendly companion mood** — the orb, colours, and emoji reactions make it feel like a pal, not a grader.
+- **Voice both ways** — she can *speak* her answer (speech-to-text) and *hear* the tutor reply read aloud (text-to-speech).
 
 ## Why open innovation matters here
 
@@ -58,7 +60,7 @@ model is a swappable component, not a hard dependency on any vendor.
 ## Run it locally
 
 1. **Start an open-weight model.** Either:
-   - **LM Studio**: load a small model (e.g. `google/gemma-3-4b`), then Developer → **Start Server** (port 1234), or
+   - **LM Studio**: load a small model (developed and demoed on `google/gemma-3n-e2b`; `google/gemma-3-4b` or `llama-3.2-3b` also work), then Developer → **Start Server** (port 1234), or
    - **Ollama**: `ollama serve` and `ollama pull gemma3:4b`.
 2. **Install and run:**
 

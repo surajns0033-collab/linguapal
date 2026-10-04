@@ -23,7 +23,10 @@ own laptop. It:
 - brings those words back later with a small spaced-repetition scheduler, so they
   actually stick;
 - remembers the words she keeps forgetting and quietly weaves them into the next
-  conversation.
+  conversation;
+- **reads her replies aloud and lets her answer by voice** — because speaking out
+  loud was the exact thing she was shy about. The orb glows and reacts as she talks,
+  which sounds like a gimmick until you watch someone relax into it.
 
 The whole thing is one FastAPI app and a page of plain JavaScript. No account, no
 signup, no analytics. It doesn't have to be big. It just has to matter to her.
@@ -49,9 +52,11 @@ The interesting bits:
 
 ## How I Built It
 
-The core of LinguaPal is an **open-weight model served locally**. `app/llm.py`
-speaks the OpenAI-compatible chat API that both LM Studio and Ollama expose, so the
-model is a swappable part of the stack — not a hard dependency on anyone's cloud.
+The core of LinguaPal is **an open-weight model served locally** — during the
+challenge the tutor ran on **Gemma 3n E2B** (2.79 GB, quantised), loaded in LM
+Studio on my own laptop. `app/llm.py` speaks the OpenAI-compatible chat API that
+both LM Studio and Ollama expose, so the model is a swappable part of the stack —
+not a hard dependency on anyone's cloud. Pinning it to Gemma is one line in `.env`.
 
 The one design constraint that shaped everything: **a small local model is slower
 and less chatty than a frontier API.** So I stopped treating the model as an

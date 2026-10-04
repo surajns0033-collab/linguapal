@@ -30,8 +30,9 @@ Deadline: **October 5, 2026, 6:59 AM UTC** = **12:29 PM IST**.
 
 ## Manual steps still required (you)
 
-1. **Start the model.** In LM Studio: load an open-weight model (e.g. `google/gemma-3-4b`)
-   and Developer → **Start Server** (port 1234). Or `ollama serve` + `ollama pull gemma3:4b`.
+1. **Start the model.** In LM Studio: load an open-weight model (developed and demoed
+   on `google/gemma-3n-e2b`; `google/gemma-3-4b` also works) and Developer →
+   **Start Server** (port 1234). Or `ollama serve` + `ollama pull gemma3:4b`.
 2. **Run it:** `.venv\Scripts\activate` → `pip install -r requirements.txt` →
    `copy .env.example .env` → `uvicorn app.main:app --reload --port 8000`.
 3. **Try it with the real friend** and capture her reaction.
