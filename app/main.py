@@ -103,8 +103,10 @@ async def chat(payload: ChatIn) -> dict:
     store.add_message(learner["id"], "assistant", turn.text,
                       corrections=turn.corrections, latency_ms=turn.latency_ms, tokens=turn.tokens)
 
-    # New vocabulary the tutor surfaced becomes review cards automatically.
-    for item in turn.vocab:
+    # New vocabulary and the learner's own mistakes both become review cards,
+    # so the things they got wrong are exactly what comes back to practise.
+    new_cards = turn.vocab + llm.corrections_to_cards(turn.corrections)
+    for item in new_cards:
         store.upsert_card(learner["id"], item["term"], item["translation"])
 
     return {
@@ -130,7 +132,8 @@ async def drill(topic: str = "everyday life") -> dict:
         raise HTTPException(502, f"Local model error: {exc}")
 
     store.add_message(learner["id"], "assistant", turn.text, corrections=turn.corrections)
-    for item in turn.vocab:
+    new_cards = turn.vocab + llm.corrections_to_cards(turn.corrections)
+    for item in new_cards:
         store.upsert_card(learner["id"], item["term"], item["translation"])
     return {"reply": turn.text, "corrections": turn.corrections, "vocab": turn.vocab}
 

@@ -38,24 +38,44 @@ class TutorTurn:
     tokens: int = 0
 
 
+def _sections(raw: str) -> dict[str, str]:
+    """Split a tutor turn into its REPLY / CORRECTIONS / VOCAB sections.
+
+    Small open-weight models are not always tidy: they may bold the labels, put
+    them on one line, or drop the newline before a label. Splitting on the label
+    tokens (rather than requiring a preceding newline) keeps the parser working
+    across a range of models.
+    """
+    text = re.sub(r"[*_`]+", "", raw)  # drop markdown emphasis on the labels
+    parts = re.split(r"(?i)\b(REPLY|CORRECTIONS|VOCAB)\s*:", text)
+    out: dict[str, str] = {}
+    # split() yields [lead, LABEL, body, LABEL, body, ...]
+    for i in range(1, len(parts) - 1, 2):
+        out[parts[i].upper()] = parts[i + 1].strip()
+    return out
+
+
 def _parse(raw: str) -> tuple[str, list[str], list[dict]]:
     """Parse the strict REPLY/CORRECTIONS/VOCAB format the prompt asks for."""
-    reply, corrections, vocab = raw.strip(), [], []
+    raw = raw.strip()
+    sections = _sections(raw)
+    if not sections:  # no labels at all: treat the whole thing as the reply
+        return raw, [], []
 
-    m = re.search(r"REPLY:\s*(.*?)(?=\n\s*(?:CORRECTIONS|VOCAB):|\Z)", raw, re.S | re.I)
-    if m:
-        reply = m.group(1).strip()
+    reply = sections.get("REPLY", "").strip()
 
-    m = re.search(r"CORRECTIONS:\s*(.*?)(?=\n\s*(?:REPLY|VOCAB):|\Z)", raw, re.S | re.I)
-    if m and "NONE" not in m.group(1).upper():
-        for line in m.group(1).splitlines():
+    corrections: list[str] = []
+    body = sections.get("CORRECTIONS", "")
+    if body and "NONE" not in body.upper():
+        for line in body.splitlines():
             line = line.strip().lstrip("-*\u2022").strip()
             if line:
                 corrections.append(line)
 
-    m = re.search(r"VOCAB:\s*(.*?)(?=\n\s*(?:REPLY|CORRECTIONS):|\Z)", raw, re.S | re.I)
-    if m and "NONE" not in m.group(1).upper():
-        for chunk in re.split(r"[;\n]", m.group(1)):
+    vocab: list[dict] = []
+    body = sections.get("VOCAB", "")
+    if body and "NONE" not in body.upper():
+        for chunk in re.split(r"[;\n]", body):
             chunk = chunk.strip().lstrip("-*\u2022").strip()
             if not chunk:
                 continue
@@ -70,6 +90,34 @@ def _parse(raw: str) -> tuple[str, list[str], list[dict]]:
                 vocab.append({"term": term, "translation": gloss})
 
     return reply, corrections, vocab
+
+
+def corrections_to_cards(corrections: list[str]) -> list[dict]:
+    """Turn 'wrong -> right' corrections into review cards.
+
+    A learner's own mistakes are the most valuable things to practise, so we make
+    them into flashcards too -- not just the new vocabulary. Small models phrase
+    these loosely, so we only take the ones with a clear 'x -> y' shape.
+    """
+    cards: list[dict] = []
+    for c in corrections:
+        if "->" not in c:
+            continue
+        wrong, right = c.split("->", 1)
+        wrong = _tidy(wrong)
+        right = _tidy(right)
+        # keep the "why" if the model added one, e.g. "(use estar for states)"
+        if wrong and right:
+            cards.append({"term": wrong, "translation": right})
+    return cards
+
+
+def _tidy(fragment: str) -> str:
+    """Trim bullets/quotes so a loosely formatted correction reads cleanly."""
+    fragment = fragment.strip().lstrip("-*\u2022").strip()
+    # drop stray quote marks that wrap a phrase, e.g. 'estoy cansado' (use estar...)
+    fragment = re.sub(r"(^|(?<=\s))'|'(?=\s|$)", "", fragment)
+    return fragment.strip()
 
 
 async def _detect(client: httpx.AsyncClient) -> tuple[str, str]:

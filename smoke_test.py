@@ -49,15 +49,18 @@ def main() -> None:
     assert "Hola" in chat["reply"], chat
     assert chat["corrections"], "expected at least one correction"
     assert len(chat["vocab"]) == 2, chat["vocab"]
-    assert chat["stats"]["cards"] == 2, chat["stats"]
+    # 2 vocab items + 1 correction ("x -> y") all become review cards.
+    assert chat["stats"]["cards"] == 3, chat["stats"]
 
     cards = client.get("/api/review").json()["cards"]
-    assert len(cards) == 2, cards
+    assert len(cards) == 3, cards
+    # The learner's own mistake is now a card too, not just the vocabulary.
+    assert any("estoy cansado" in c["back"] for c in cards), cards
     graded = client.post("/api/review", json={"card_id": cards[0]["id"], "quality": 3}).json()
     assert graded["ok"] and graded["card"]["reps"] == 1, graded
 
     stats = client.get("/api/stats").json()["stats"]
-    assert stats["cards"] == 2 and stats["turns"] == 1, stats
+    assert stats["cards"] == 3 and stats["turns"] == 1, stats
 
     print("SMOKE TEST PASSED")
     print("  learner:", setup.json()["learner"])

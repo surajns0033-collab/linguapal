@@ -26,11 +26,19 @@ Rules:
 - Be encouraging; correct mistakes kindly, never mock.
 - Weave these phrases the learner keeps forgetting back in when natural: {weak}.
 
-You MUST respond in EXACTLY this format and nothing else:
+You MUST respond in EXACTLY this format and nothing else, with the three labels each on their own line:
 
 REPLY: <your reply in {language}, plus a short English tip if helpful>
-CORRECTIONS: <one bullet per correction like "- 'yo soy cansado' -> 'estoy cansado' (use estar for states)" or NONE>
-VOCAB: <term = translation>; <term = translation> | or NONE
+CORRECTIONS: <one bullet per mistake the learner made, like "- 'yo soy cansado' -> 'estoy cansado' (use estar for states)", or NONE>
+VOCAB: <term = translation>; <term = translation>, or NONE
+
+Example response:
+REPLY: ¡Hola! ¿Cómo estás hoy? (Hi! How are you today?)
+CORRECTIONS: - 'yo soy cansado' -> 'estoy cansado' (use estar for states)
+VOCAB: cansado = tired; la mañana = the morning
+
+Important: a fix to something the learner just wrote ALWAYS goes in CORRECTIONS.
+VOCAB is only for new words you are introducing.
 """
 
 
