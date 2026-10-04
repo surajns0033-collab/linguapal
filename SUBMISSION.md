@@ -42,7 +42,7 @@ machine, see below.
 
 ## Code
 
-`[GitHub repo link here]` — MIT licensed.
+[github.com/surajns0033-collab/linguapal](https://github.com/surajns0033-collab/linguapal) — MIT licensed.
 
 The interesting bits:
 - `app/llm.py` — talks to a **local, OpenAI-compatible open-weight server** (LM Studio or Ollama).
