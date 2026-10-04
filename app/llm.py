@@ -120,6 +120,31 @@ def _tidy(fragment: str) -> str:
     return fragment.strip()
 
 
+def _normalize(messages: list[dict]) -> list[dict]:
+    """Coerce a message list into the strict user-first alternation many chat
+    templates require (Gemma's, for one) -- it otherwise rejects the request with
+    'Conversation roles must alternate user/assistant/...'.
+
+    We merge consecutive same-role turns and drop any leading assistant turns.
+    This matters here because the tutor's opening line (from /api/drill) is stored
+    as an assistant message, so a learner's first real turn would arrive as
+    [assistant, user, ...] and 400 out of the local server.
+    """
+    cleaned: list[dict] = []
+    for m in messages:
+        role = m.get("role")
+        content = str(m.get("content") or "").strip()
+        if role not in ("user", "assistant") or not content:
+            continue
+        if cleaned and cleaned[-1]["role"] == role:
+            cleaned[-1]["content"] += "\n" + content
+        else:
+            cleaned.append({"role": role, "content": content})
+    while cleaned and cleaned[0]["role"] != "user":
+        cleaned.pop(0)
+    return cleaned
+
+
 async def _detect(client: httpx.AsyncClient) -> tuple[str, str]:
     """Find a reachable local server and a loaded model. Cached after success."""
     global _detected
@@ -152,7 +177,8 @@ async def _detect(client: httpx.AsyncClient) -> tuple[str, str]:
 async def complete(system: str, messages: list[dict], *, temperature: float | None = None) -> TutorTurn:
     """Run one chat completion against the local model and parse the tutor format."""
     s = settings()
-    payload_messages = [{"role": "system", "content": system}, *messages]
+    convo = _normalize(messages) or messages
+    payload_messages = [{"role": "system", "content": system}, *convo]
 
     async with httpx.AsyncClient(timeout=s.llm_timeout) as client:
         base, model = await _detect(client)

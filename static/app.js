@@ -22,6 +22,30 @@ const LANG_TAGS = {
 };
 let targetTag = "es-US";
 let voiceOn = true;
+let voices = [];
+let speakTimer = null;
+
+// Chrome/Edge load speech voices asynchronously and the first getVoices() call
+// often returns []. Prime them once and refresh when the browser reports more.
+function loadVoices() {
+    if (!window.speechSynthesis) return;
+    try { voices = window.speechSynthesis.getVoices() || []; } catch (_) { voices = []; }
+}
+if (window.speechSynthesis) {
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function pickVoice(tag) {
+    if (!voices.length) loadVoices();
+    const want = String(tag || "").toLowerCase();
+    const base = want.split("-")[0];
+    return (
+        voices.find((v) => (v.lang || "").toLowerCase() === want) ||
+        voices.find((v) => (v.lang || "").toLowerCase().startsWith(base)) ||
+        null
+    );
+}
 
 function tagFor(language) {
     const key = String(language || "").toLowerCase().trim();
@@ -92,14 +116,20 @@ function speak(text) {
     if (!voiceOn || !text || !window.speechSynthesis) return;
     const clean = String(text).replace(/\([^)]*\)/g, "").replace(/[""]/g, "").trim();
     if (!clean) return;
+    const synth = window.speechSynthesis;
     const u = new SpeechSynthesisUtterance(clean);
+    const v = pickVoice(targetTag);
+    if (v) u.voice = v;
     u.lang = targetTag;
     u.rate = 0.95;
     u.onstart = () => setOrb("speaking", "🗣️", "Speaking… listen and repeat.");
     u.onend = () => setOrb("idle", "🙂", "Your turn — say something back.");
     u.onerror = () => setOrb("idle", "🙂", "Your turn.");
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+    // Chrome drops an utterance queued in the same tick as cancel(); give it a beat.
+    clearTimeout(speakTimer);
+    try { synth.cancel(); } catch (_) { }
+    if (synth.paused) { try { synth.resume(); } catch (_) { } }
+    speakTimer = setTimeout(() => { try { synth.speak(u); } catch (_) { } }, 80);
 }
 
 function addBubble(role, text, corrections = [], vocab = []) {
@@ -254,7 +284,18 @@ function initSpeech() {
         setOrb("listening", "🎙️", "Listening… speak now.");
     };
     recog.onend = () => { listening = false; $("btnMic").classList.remove("live"); };
-    recog.onerror = () => { listening = false; $("btnMic").classList.remove("live"); setOrb("idle", "🙂", "Didn't catch that — try again."); };
+    recog.onerror = (e) => {
+        listening = false;
+        $("btnMic").classList.remove("live");
+        const why = {
+            "not-allowed": "Microphone is blocked — allow mic access in the browser.",
+            "service-not-allowed": "This browser blocked the speech service.",
+            "no-speech": "I didn't catch that — try again.",
+            "audio-capture": "No microphone was found.",
+            "network": "Voice input needs an internet connection in this browser.",
+        }[e.error] || "I didn't catch that — try again.";
+        setOrb("idle", "🙂", why);
+    };
 }
 
 function toggleMic() {
