@@ -146,6 +146,14 @@ def weak_items(learner_id: int, limit: int = 8) -> list[str]:
     return [r["front"] for r in rows]
 
 
+def reset() -> None:
+    """Wipe the local learner, history, and cards so a demo can start fresh."""
+    with _conn() as conn:
+        conn.execute("DELETE FROM messages")
+        conn.execute("DELETE FROM cards")
+        conn.execute("DELETE FROM learner")
+
+
 def stats(learner_id: int) -> dict:
     now = time.time()
     with _conn() as conn:

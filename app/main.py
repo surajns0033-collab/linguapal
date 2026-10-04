@@ -154,6 +154,13 @@ async def get_stats() -> dict:
     return {"stats": store.stats(_learner()["id"])}
 
 
+@app.post("/api/reset")
+async def reset() -> dict:
+    """Clear the local practice history so someone new can start (used for a fresh demo)."""
+    store.reset()
+    return {"ok": True}
+
+
 # --- static front end -------------------------------------------------------
 @app.get("/")
 async def index() -> FileResponse:

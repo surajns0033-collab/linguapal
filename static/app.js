@@ -150,6 +150,7 @@ async function newPrompt() {
 function showApp(learner) {
     $("setupCard").hidden = true;
     $("chatCard").hidden = false;
+    $("btnReset").hidden = false;
     $("chatTitle").textContent = `Practising ${learner.language} with ${learner.name}`;
     renderStats(learner.stats);
 }
@@ -180,9 +181,21 @@ $("btnSetup").onclick = async () => {
     newPrompt();
 };
 
+async function resetLearner() {
+    if (!confirm("Start over? This clears the local practice history on this machine.")) return;
+    await api("/api/reset", { method: "POST" });
+    $("messages").innerHTML = "";
+    $("review").innerHTML = "";
+    $("chatCard").hidden = true;
+    $("btnReset").hidden = true;
+    $("setupCard").hidden = false;
+    renderStats({ retention: 0, due: 0, matured: 0, turns: 0 });
+}
+
 $("chatForm").onsubmit = (e) => { e.preventDefault(); sendMessage($("inMsg").value); };
 $("btnDrill").onclick = newPrompt;
 $("btnReload").onclick = loadReview;
+$("btnReset").onclick = resetLearner;
 $("inMsg").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage($("inMsg").value); }
 });
