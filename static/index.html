@@ -15,6 +15,7 @@
             <span class="tagline">a little language tutor, built for one person</span>
         </div>
         <div class="topbar-actions">
+            <button id="btnVoice" class="badge badge--muted" title="Toggle spoken replies">🔊 voice on</button>
             <button id="btnReset" class="badge badge--muted" hidden>start over</button>
             <div id="modelBadge" class="badge badge--muted">checking local model…</div>
         </div>
@@ -53,13 +54,25 @@
                 </div>
             </div>
 
+            <!-- Companion orb: shows what the tutor is doing, as a mood -->
+            <div class="orbWrap" id="orbWrap" aria-live="polite">
+                <div class="orb" id="orb" data-state="idle"><span class="orbFace" id="orbFace">🙂</span></div>
+                <div class="orbText">
+                    <div class="orbName">Pal</div>
+                    <div class="orbStatus" id="orbStatus">Ready when you are. Tap the mic or type below.</div>
+                </div>
+            </div>
+
             <div id="messages" class="messages" aria-live="polite"></div>
 
             <form id="chatForm" class="composer">
-                <textarea id="inMsg" rows="2" placeholder="Type your reply in the language you're learning…"></textarea>
+                <button id="btnMic" class="ghost mic" type="button" title="Speak your reply">🎤</button>
+                <textarea id="inMsg" rows="2"
+                    placeholder="Type or speak your reply in the language you're learning…"></textarea>
                 <button id="btnSend" class="primary" type="submit">Send</button>
             </form>
-            <p class="muted tiny">Tip: mistakes are welcome. The tutor will correct them gently.</p>
+            <p class="muted tiny">Tip: mistakes are welcome. The tutor corrects them gently — and reads its reply aloud.
+            </p>
         </section>
 
         <!-- Side column -->
@@ -83,8 +96,8 @@
             </section>
 
             <section class="card muted small">
-                <p>Runs on a local open-weight model — swap GPT, Llama, or Gemma without changing the app.
-                    Your practice never leaves this machine.</p>
+                <p>Runs on a local open-weight model — swap Phi, Llama, or Gemma without changing the app.
+                    Your voice and your practice never leave this machine.</p>
             </section>
         </aside>
     </main>
