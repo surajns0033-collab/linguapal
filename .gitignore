@@ -14,10 +14,13 @@ data/
 Thumbs.db
 .vscode/
 .idea/
-uvicorn.log 
- 
-# Temp response dumps from local testing 
-chat.json 
-drill.json 
-c1.json 
+uvicorn.log
+
+# Temp response dumps / artifacts from local testing
+chat.json
+drill.json
+health.json
+review.json
+c1.json
 c2.json
+devrelay_install.ps1
