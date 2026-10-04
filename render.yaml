@@ -1,0 +1,25 @@
+# Render Blueprint — hosts LinguaPal's app/front end.
+# The open-weight model runs locally (or on an open-weight server you point at
+# via LLM_BASE_URL); Render serves the app so it's always reachable.
+services:
+  - type: web
+    name: linguapal
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    disk:
+      name: linguapal-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      # Point these at your open-weight inference server (leave base URL blank
+      # to auto-detect a local LM Studio / Ollama during local development).
+      - key: LLM_BASE_URL
+        sync: false
+      - key: LLM_MODEL
+        sync: false
+      - key: LLM_TEMPERATURE
+        value: "0.6"

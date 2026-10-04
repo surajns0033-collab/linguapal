@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LinguaPal — a tutor for one friend</title>
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">LinguaPal</span>
+            <span class="tagline">a little language tutor, built for one person</span>
+        </div>
+        <div id="modelBadge" class="badge badge--muted">checking local model…</div>
+    </header>
+
+    <main class="layout">
+        <!-- Setup -->
+        <section id="setupCard" class="card" hidden>
+            <h2>Who is this for?</h2>
+            <p class="muted">LinguaPal keeps everything on this machine. Just say who you're helping.</p>
+            <div class="grid3">
+                <label>Friend's name
+                    <input id="inName" placeholder="e.g. Priya" autocomplete="off" />
+                </label>
+                <label>Language to practise
+                    <input id="inLang" placeholder="e.g. Spanish" autocomplete="off" />
+                </label>
+                <label>Level
+                    <select id="inLevel">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </label>
+            </div>
+            <button id="btnSetup" class="primary">Start practising</button>
+        </section>
+
+        <!-- Chat -->
+        <section id="chatCard" class="card" hidden>
+            <div class="cardHead">
+                <h2 id="chatTitle">Practice</h2>
+                <div class="row">
+                    <input id="inTopic" class="topic" placeholder="topic (e.g. ordering coffee)" />
+                    <button id="btnDrill" class="ghost">New prompt</button>
+                </div>
+            </div>
+
+            <div id="messages" class="messages" aria-live="polite"></div>
+
+            <form id="chatForm" class="composer">
+                <textarea id="inMsg" rows="2" placeholder="Type your reply in the language you're learning…"></textarea>
+                <button id="btnSend" class="primary" type="submit">Send</button>
+            </form>
+            <p class="muted tiny">Tip: mistakes are welcome. The tutor will correct them gently.</p>
+        </section>
+
+        <!-- Side column -->
+        <aside class="side">
+            <section class="card">
+                <h2>Progress</h2>
+                <div class="stats" id="stats">
+                    <div class="stat"><span class="n" id="sRetention">0%</span><span class="l">retention</span></div>
+                    <div class="stat"><span class="n" id="sDue">0</span><span class="l">due now</span></div>
+                    <div class="stat"><span class="n" id="sMatured">0</span><span class="l">matured</span></div>
+                    <div class="stat"><span class="n" id="sTurns">0</span><span class="l">turns</span></div>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="cardHead">
+                    <h2>Review</h2>
+                    <button id="btnReload" class="ghost">Refresh</button>
+                </div>
+                <div id="review" class="review"></div>
+            </section>
+
+            <section class="card muted small">
+                <p>Runs on a local open-weight model — swap GPT, Llama, or Gemma without changing the app.
+                    Your practice never leaves this machine.</p>
+            </section>
+        </aside>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
