@@ -88,7 +88,9 @@ async def chat(payload: ChatIn) -> dict:
     if user_text:
         store.add_message(learner["id"], "user", user_text)
 
-    history = store.recent_messages(learner["id"], limit=12)
+    # A short window keeps the prompt small (faster on a laptop) while still
+    # giving the tutor enough context to stay on topic.
+    history = store.recent_messages(learner["id"], limit=6)
     system = tutor_system_prompt(
         learner["language"], learner["level"], learner["name"], store.weak_items(learner["id"])
     )

@@ -146,18 +146,19 @@ def _normalize(messages: list[dict]) -> list[dict]:
 
 
 async def _detect(client: httpx.AsyncClient) -> tuple[str, str]:
-    """Find a reachable local server and a loaded model. Cached after success."""
+    """Find a reachable server and a loaded model. Cached after success."""
     global _detected
     if _detected is not None:
         return _detected
 
     s = settings()
     bases = [s.llm_base_url] if s.llm_base_url else list(_CANDIDATES)
+    headers = {"Authorization": f"Bearer {s.llm_api_key}"} if s.llm_api_key else None
 
     for base in bases:
         base = base.rstrip("/")
         try:
-            resp = await client.get(f"{base}/models", timeout=3.0)
+            resp = await client.get(f"{base}/models", timeout=3.0, headers=headers)
             resp.raise_for_status()
             data = resp.json().get("data", [])
             model = s.llm_model or (data[0]["id"] if data else "")
@@ -180,16 +181,19 @@ async def complete(system: str, messages: list[dict], *, temperature: float | No
     convo = _normalize(messages) or messages
     payload_messages = [{"role": "system", "content": system}, *convo]
 
+    headers = {"Authorization": f"Bearer {s.llm_api_key}"} if s.llm_api_key else None
     async with httpx.AsyncClient(timeout=s.llm_timeout) as client:
         base, model = await _detect(client)
         body = {
             "model": model,
             "messages": payload_messages,
             "temperature": s.llm_temperature if temperature is None else temperature,
+            # Cap the reply so a small local model stays snappy instead of rambling.
+            "max_tokens": s.llm_max_tokens,
             "stream": False,
         }
         started = time.perf_counter()
-        resp = await client.post(f"{base}/chat/completions", json=body)
+        resp = await client.post(f"{base}/chat/completions", json=body, headers=headers)
         resp.raise_for_status()
         latency_ms = int((time.perf_counter() - started) * 1000)
         data = resp.json()

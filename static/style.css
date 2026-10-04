@@ -425,24 +425,6 @@ button:disabled {
     animation: bob 1s ease-in-out infinite, grotate 1.4s linear infinite
 }
 
-.orb[data-state="speaking"] {
-    --c1: #37c2a0;
-    --c2: #7c5cff;
-    animation: pulse .7s ease-in-out infinite
-}
-
-.orb[data-state="listening"] {
-    --c1: #ff5c8a;
-    --c2: #ffb0c6;
-    animation: pulse .9s ease-in-out infinite
-}
-
-.orb[data-state="listening"]::after,
-.orb[data-state="speaking"]::after {
-    opacity: 1;
-    animation: ripple 1.2s ease-out infinite
-}
-
 .orb[data-state="happy"] {
     --c1: #2ee6a6;
     --c2: #8bffcf;
@@ -538,31 +520,4 @@ button:disabled {
     .orbFace {
         animation: none
     }
-}
-
-/* --- voice controls --- */
-.mic {
-    font-size: 18px;
-    padding: 10px 12px;
-    line-height: 1
-}
-
-.mic.live {
-    border-color: var(--accent);
-    color: #fff;
-    background: #ff5c8a;
-    animation: pulse .8s ease-in-out infinite
-}
-
-.speakBtn {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 3px 10px;
-    font-size: 12px;
-    border-radius: 999px;
-    background: #0e1320
-}
-
-.speakBtn:hover {
-    border-color: var(--accent2)
 }

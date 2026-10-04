@@ -23,7 +23,6 @@ tracking what's actually sticking.
 - **Progress that means something** — retention %, cards due now, matured cards, turns practised.
 - **A durable memory of weak spots** — terms the learner keeps lapsing on are woven back into future prompts.
 - **A friendly companion mood** — the orb, colours, and emoji reactions make it feel like a pal, not a grader.
-- **Voice both ways** — she can *speak* her answer (speech-to-text) and *hear* the tutor reply read aloud (text-to-speech).
 
 ## Why open innovation matters here
 
@@ -35,9 +34,10 @@ it is the whole point, and it is what a closed API could not give us:
 - **Runs on a laptop, even offline.** Language practice on a train or a flight still works.
 - **Zero marginal cost.** Practice as much as you like; there is no per-token bill, which
   matters for a friend who would feel guilty "using up" an API.
-- **Swappable models.** The same app drives Gemma, Llama, or Qwen — LM Studio or Ollama —
-  because the open ecosystem speaks one interop layer. If a better small model lands
-  tomorrow, we swap it in with one env var.
+- **Swappable models — and a swappable place to run them.** The same app drives Gemma,
+  Llama, or Qwen — LM Studio or Ollama locally, or any OpenAI-compatible open-weight
+  endpoint when hosted (`LLM_BASE_URL` + optional `LLM_API_KEY`). One env var moves it
+  from a laptop to the cloud; no closed API is ever in the loop.
 - **Yours to change.** The prompt, the scheduler, the UI — all forks of a friend's gift,
   not a locked product.
 
@@ -45,15 +45,17 @@ it is the whole point, and it is what a closed API could not give us:
 
 ```
 Browser (static/, no framework)  ──►  FastAPI (app/main.py)
-                                        ├─ llm.py     → local OpenAI-compatible server
-                                        │              (LM Studio :1234 or Ollama :11434)
+                                        ├─ llm.py     → OpenAI-compatible endpoint
+                                        │              (LM Studio :1234, Ollama :11434,
+                                        │               or a hosted open-weight server)
                                         ├─ prompts.py → tutor + drill prompts
                                         ├─ store.py   → SQLite: learner, messages, cards
                                         └─ srs.py     → spaced-repetition scheduler
 ```
 
-Only a local, OpenAI-compatible endpoint is used by default. The open-weight
-model is a swappable component, not a hard dependency on any vendor.
+An OpenAI-compatible endpoint is used — a local one by default (LM Studio/Ollama),
+or a remote open-weight endpoint when deployed. The open-weight model is a swappable
+component, not a hard dependency on any vendor.
 
 ## Run it locally
 
@@ -80,7 +82,8 @@ in `.env` for any other OpenAI-compatible open-weight server.
 Render hosts the **app/front end**; the open-weight model can run locally on the
 learner's machine or on any open-weight server you point at:
 
-- Set `LLM_BASE_URL` to that server's `/v1` URL and `LLM_MODEL` to its model id.
+- Set `LLM_BASE_URL` to that server's `/v1` URL, `LLM_MODEL` to its model id, and
+  `LLM_API_KEY` if the endpoint requires one — so the hosted app works with no local GPU.
 - Deploy the repo to Render as a **Web Service** (Dockerfile included, see `render.yaml`).
 - Set `DATA_DIR` to a mounted disk if you want review history to persist.
 
@@ -88,7 +91,8 @@ This keeps the friend's data under their control while the app is always reachab
 
 ## Partner categories entered
 
-- **Best Use of Gemma** — Gemma (open-weight) is the tutor's core.
+- **Best Use of Gemma** — Gemma is the tutor's core, run locally (LM Studio/Ollama) or
+  served through any OpenAI-compatible provider: one env var swaps it, no code change.
 - **Best Use of Render** — the app/front end is deployed on Render.
 
 ## Configuration

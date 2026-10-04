@@ -12,55 +12,14 @@ async function api(path, opts = {}) {
     return body;
 }
 
-// --- voice: map a language name to a BCP-47 tag for speech synthesis/recognition.
-const LANG_TAGS = {
-    spanish: "es-ES", french: "fr-FR", german: "de-DE", italian: "it-IT",
-    portuguese: "pt-BR", japanese: "ja-JP", korean: "ko-KR", chinese: "zh-CN",
-    mandarin: "zh-CN", hindi: "hi-IN", arabic: "ar-SA", russian: "ru-RU",
-    dutch: "nl-NL", turkish: "tr-TR", polish: "pl-PL", swedish: "sv-SE",
-    english: "en-US",
-};
-let targetTag = "es-US";
-let voiceOn = true;
-let voices = [];
-let speakTimer = null;
-
-// Chrome/Edge load speech voices asynchronously and the first getVoices() call
-// often returns []. Prime them once and refresh when the browser reports more.
-function loadVoices() {
-    if (!window.speechSynthesis) return;
-    try { voices = window.speechSynthesis.getVoices() || []; } catch (_) { voices = []; }
-}
-if (window.speechSynthesis) {
-    loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-}
-
-function pickVoice(tag) {
-    if (!voices.length) loadVoices();
-    const want = String(tag || "").toLowerCase();
-    const base = want.split("-")[0];
-    return (
-        voices.find((v) => (v.lang || "").toLowerCase() === want) ||
-        voices.find((v) => (v.lang || "").toLowerCase().startsWith(base)) ||
-        null
-    );
-}
-
-function tagFor(language) {
-    const key = String(language || "").toLowerCase().trim();
-    for (const k in LANG_TAGS) if (key.includes(k)) return LANG_TAGS[k];
-    return "en-US";
-}
-
 function setModelBadge(health) {
     const el = $("modelBadge");
     const m = health.model || {};
     if (m.ok) {
-        el.textContent = `local model: ${m.model}`;
+        el.textContent = `model: ${m.model}`;
         el.className = "badge badge--ok";
     } else {
-        el.textContent = "no local model detected";
+        el.textContent = "no model detected";
         el.className = "badge badge--bad";
         el.title = m.error || "";
     }
@@ -111,40 +70,11 @@ function burst(emoji) {
     }
 }
 
-// --- speech out: read the tutor's reply aloud, in the target language.
-function speak(text) {
-    if (!voiceOn || !text || !window.speechSynthesis) return;
-    const clean = String(text).replace(/\([^)]*\)/g, "").replace(/[""]/g, "").trim();
-    if (!clean) return;
-    const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(clean);
-    const v = pickVoice(targetTag);
-    if (v) u.voice = v;
-    u.lang = targetTag;
-    u.rate = 0.95;
-    u.onstart = () => setOrb("speaking", "🗣️", "Speaking… listen and repeat.");
-    u.onend = () => setOrb("idle", "🙂", "Your turn — say something back.");
-    u.onerror = () => setOrb("idle", "🙂", "Your turn.");
-    // Chrome drops an utterance queued in the same tick as cancel(); give it a beat.
-    clearTimeout(speakTimer);
-    try { synth.cancel(); } catch (_) { }
-    if (synth.paused) { try { synth.resume(); } catch (_) { } }
-    speakTimer = setTimeout(() => { try { synth.speak(u); } catch (_) { } }, 80);
-}
-
 function addBubble(role, text, corrections = [], vocab = []) {
     const wrap = document.createElement("div");
     wrap.className = `bubble ${role}`;
     wrap.textContent = text;
 
-    if (role === "tutor") {
-        const bar = document.createElement("button");
-        bar.className = "speakBtn";
-        bar.type = "button";
-        bar.textContent = "🔊 hear it";
-        bar.onclick = () => speak(text);
-        wrap.appendChild(bar);
-    }
     if (corrections && corrections.length) {
         const c = document.createElement("div");
         c.className = "corr";
@@ -209,42 +139,48 @@ function reviewCard(card) {
     return el;
 }
 
-async function sendMessage(text) {
-    if (!text.trim()) return;
-    addBubble("user", text);
-    $("inMsg").value = "";
+// --- one tutor turn, with a watchdog so the orb can never hang on "thinking".
+async function runTurn(statusText, doFetch) {
     $("btnSend").disabled = true;
-    setOrb("thinking", "🤔", "Thinking…");
+    setOrb("thinking", "🤔", statusText);
+    const watchdog = setTimeout(
+        () => setOrb("error", "😵", "Taking too long — is the model still running?"),
+        90000
+    );
     try {
-        const data = await api("/api/chat", { method: "POST", body: JSON.stringify({ message: text }) });
+        const data = await doFetch();
         addBubble("tutor", data.reply, data.corrections, data.vocab);
-        renderStats(data.stats);
+        if (data.stats) renderStats(data.stats);
         loadReview();
         const clean = !data.corrections || !data.corrections.length;
         setOrb(clean ? "happy" : "oops", clean ? "😄" : "😅",
             clean ? "Nice — no fixes needed." : "One small fix, then onward.");
-        speak(data.reply);
+        setTimeout(() => setOrb("idle", "🙂", "Your turn — type your reply."), 1400);
     } catch (e) {
         setOrb("error", "😵", e.message);
         addBubble("tutor", "⚠️ " + e.message);
     } finally {
+        clearTimeout(watchdog);
         $("btnSend").disabled = false;
         $("inMsg").focus();
     }
 }
 
+async function sendMessage(text) {
+    text = (text || "").trim();
+    if (!text) return;
+    addBubble("user", text);
+    $("inMsg").value = "";
+    await runTurn("Thinking…", () =>
+        api("/api/chat", { method: "POST", body: JSON.stringify({ message: text }) }));
+}
+
 async function newPrompt() {
     const topic = $("inTopic").value.trim() || "everyday life";
     $("btnDrill").disabled = true;
-    setOrb("thinking", "🤔", "Setting up a new topic…");
     try {
-        const data = await api(`/api/drill?topic=${encodeURIComponent(topic)}`);
-        addBubble("tutor", data.reply, data.corrections, data.vocab);
-        setOrb("idle", "🙂", "Your turn — jump in.");
-        speak(data.reply);
-    } catch (e) {
-        setOrb("error", "😵", e.message);
-        addBubble("tutor", "⚠️ " + e.message);
+        await runTurn("Setting up a new topic…", () =>
+            api(`/api/drill?topic=${encodeURIComponent(topic)}`));
     } finally {
         $("btnDrill").disabled = false;
     }
@@ -255,61 +191,11 @@ function showApp(learner) {
     $("chatCard").hidden = false;
     $("btnReset").hidden = false;
     $("chatTitle").textContent = `Practising ${learner.language} with ${learner.name}`;
-    targetTag = tagFor(learner.language);
     setOrb("idle", "🙂", `Ready when you are — let's practise ${learner.language}.`);
     renderStats(learner.stats);
 }
 
-// --- speech in: let the friend speak the language they're learning.
-let recog = null;
-let listening = false;
-
-function initSpeech() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-        $("btnMic").title = "Speech input isn't supported in this browser (try Chrome or Edge)";
-        return;
-    }
-    recog = new SR();
-    recog.interimResults = false;
-    recog.maxAlternatives = 1;
-    recog.onresult = (e) => {
-        const text = e.results[0][0].transcript;
-        $("inMsg").value = text;
-        sendMessage(text);
-    };
-    recog.onstart = () => {
-        listening = true;
-        $("btnMic").classList.add("live");
-        setOrb("listening", "🎙️", "Listening… speak now.");
-    };
-    recog.onend = () => { listening = false; $("btnMic").classList.remove("live"); };
-    recog.onerror = (e) => {
-        listening = false;
-        $("btnMic").classList.remove("live");
-        const why = {
-            "not-allowed": "Microphone is blocked — allow mic access in the browser.",
-            "service-not-allowed": "This browser blocked the speech service.",
-            "no-speech": "I didn't catch that — try again.",
-            "audio-capture": "No microphone was found.",
-            "network": "Voice input needs an internet connection in this browser.",
-        }[e.error] || "I didn't catch that — try again.";
-        setOrb("idle", "🙂", why);
-    };
-}
-
-function toggleMic() {
-    if (!recog) {
-        addBubble("tutor", "🎤 Speech input isn't supported in this browser. Chrome or Edge work best.");
-        return;
-    }
-    if (listening) { recog.stop(); return; }
-    recog.lang = targetTag;
-    try { recog.start(); } catch (_) { /* already started */ }
-}
-
 async function boot() {
-    initSpeech();
     const health = await api("/api/health").catch(() => ({ model: { ok: false } }));
     setModelBadge(health);
 
@@ -350,12 +236,6 @@ $("chatForm").onsubmit = (e) => { e.preventDefault(); sendMessage($("inMsg").val
 $("btnDrill").onclick = newPrompt;
 $("btnReload").onclick = loadReview;
 $("btnReset").onclick = resetLearner;
-$("btnMic").onclick = toggleMic;
-$("btnVoice").onclick = () => {
-    voiceOn = !voiceOn;
-    $("btnVoice").textContent = voiceOn ? "🔊 voice on" : "🔇 voice off";
-    if (!voiceOn && window.speechSynthesis) window.speechSynthesis.cancel();
-};
 $("inMsg").addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage($("inMsg").value); }
 });

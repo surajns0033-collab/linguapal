@@ -24,6 +24,11 @@ class Settings:
         self.llm_model = _get("LLM_MODEL")
         self.llm_temperature = float(_get("LLM_TEMPERATURE", "0.6") or "0.6")
         self.llm_timeout = float(_get("LLM_TIMEOUT", "120") or "120")
+        # Keep replies short so a small local model answers fast on a laptop GPU.
+        self.llm_max_tokens = int(_get("LLM_MAX_TOKENS", "180") or "180")
+        # Optional key for a remote OpenAI-compatible open-weight endpoint (used
+        # when the app is hosted and there's no local GPU). Empty for LM Studio/Ollama.
+        self.llm_api_key = _get("LLM_API_KEY")
 
         # Offline-friendly storage: everything stays on this machine
         data_dir = _get("DATA_DIR", "./data")
@@ -31,9 +36,7 @@ class Settings:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.db_path = self.data_dir / "linguapal.db"
 
-        # Optional partner tech
-        self.elevenlabs_api_key = _get("ELEVENLABS_API_KEY")
-        self.elevenlabs_voice_id = _get("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
+        # Optional
         self.sentry_dsn = _get("SENTRY_DSN")
 
         # Server

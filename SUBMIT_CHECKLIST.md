@@ -38,8 +38,10 @@ Deadline: **October 5, 2026, 6:59 AM UTC** = **12:29 PM IST**.
 3. **Try it with the real friend** and capture her reaction.
 4. **Record a 60–90s demo video** (setup → a few turns with corrections → review queue → stats).
 5. **Push to GitHub** (a fresh public repo — all commits inside the window).
-6. **Deploy to Render** using [`render.yaml`](render.yaml); set `LLM_BASE_URL`/`LLM_MODEL`.
-   Save the URL.
+6. **Deploy to Render** using [`render.yaml`](render.yaml); set `LLM_BASE_URL`,
+   `LLM_MODEL`, and (if the endpoint needs one) `LLM_API_KEY`. Point it at any
+   OpenAI-compatible **open-weight** endpoint so the hosted app works without a
+   local GPU. Save the URL.
 7. **Fill the placeholders** in [`SUBMISSION.md`](SUBMISSION.md): demo video link,
    Render URL, GitHub repo link, DevRelay session link, and "What Maya Said".
 8. **Publish on DEV** using the challenge's submission template, set the post to
@@ -47,8 +49,6 @@ Deadline: **October 5, 2026, 6:59 AM UTC** = **12:29 PM IST**.
 
 ## Optional upgrades (only if time remains)
 
-- **ElevenLabs** — give the tutor a voice for beginners (would add the
-  *Best Use of ElevenLabs* category). Add `ELEVENLABS_API_KEY`, expose `/api/tts`.
 - **Tinker** — fine-tune a tiny model on the friend's common mistakes and show the
   improvement (adds *Best Use of Tinker*, and a strong before/after story).
 

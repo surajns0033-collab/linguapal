@@ -15,7 +15,6 @@
             <span class="tagline">a little language tutor, built for one person</span>
         </div>
         <div class="topbar-actions">
-            <button id="btnVoice" class="badge badge--muted" title="Toggle spoken replies">🔊 voice on</button>
             <button id="btnReset" class="badge badge--muted" hidden>start over</button>
             <div id="modelBadge" class="badge badge--muted">checking local model…</div>
         </div>
@@ -59,19 +58,18 @@
                 <div class="orb" id="orb" data-state="idle"><span class="orbFace" id="orbFace">🙂</span></div>
                 <div class="orbText">
                     <div class="orbName">Pal</div>
-                    <div class="orbStatus" id="orbStatus">Ready when you are. Tap the mic or type below.</div>
+                    <div class="orbStatus" id="orbStatus">Ready when you are. Type your reply below.</div>
                 </div>
             </div>
 
             <div id="messages" class="messages" aria-live="polite"></div>
 
             <form id="chatForm" class="composer">
-                <button id="btnMic" class="ghost mic" type="button" title="Speak your reply">🎤</button>
-                <textarea id="inMsg" rows="2"
-                    placeholder="Type or speak your reply in the language you're learning…"></textarea>
+                <textarea id="inMsg" rows="2" placeholder="Type your reply in the language you're learning…"></textarea>
                 <button id="btnSend" class="primary" type="submit">Send</button>
             </form>
-            <p class="muted tiny">Tip: mistakes are welcome. The tutor corrects them gently — and reads its reply aloud.
+            <p class="muted tiny">Tip: mistakes are welcome. The tutor corrects them gently, and every new word
+                becomes a flashcard automatically.
             </p>
         </section>
 
@@ -96,8 +94,9 @@
             </section>
 
             <section class="card muted small">
-                <p>Runs on a local open-weight model — swap Phi, Llama, or Gemma without changing the app.
-                    Your voice and your practice never leave this machine.</p>
+                <p>Runs on an open-weight model — swap Phi, Llama, or Gemma without changing the app. Point it at a
+                    local LM Studio / Ollama, or any OpenAI-compatible open-weight endpoint.
+                    Your practice never has to leave this machine.</p>
             </section>
         </aside>
     </main>
