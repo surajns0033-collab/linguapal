@@ -1,7 +1,5 @@
 # LinguaPal — a little language tutor, built for one friend
 
-> *"It doesn't have to be big. It has to matter to them."* — the Hacktoberfest Weekend Challenge prompt
-
 LinguaPal is a small, friendly practice partner for **one real person**: my friend
 who is learning a new language and gets shy practising out loud. It runs on a
 **local open-weight model**, keeps every bit of her practice on her own machine,

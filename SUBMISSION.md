@@ -29,7 +29,7 @@ own laptop. It:
   which sounds like a gimmick until you watch someone relax into it.
 
 The whole thing is one FastAPI app and a page of plain JavaScript. No account, no
-signup, no analytics. It doesn't have to be big. It just has to matter to her.
+signup, no analytics.
 
 ## Demo
 
