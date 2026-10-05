@@ -6,6 +6,8 @@ tags: devchallenge, weekendchallenge, hf26challenge
 
 *This is a submission for the [Hacktoberfest Weekend Challenge: Build for a Friend](https://dev.to/challenges/hacktoberfest-weekend-2026-10-01)*
 
+![LinguaPal — a small, patient language tutor you can run yourself](https://raw.githubusercontent.com/surajns0033-collab/linguapal/main/docs/banner.svg)
+
 ## What I Built
 
 My friend Maya is learning Spanish. She's not afraid of grammar drills — she's
@@ -37,6 +39,8 @@ signup, no analytics.
      with corrections → the review queue → progress stats updating. -->
 `[video demo link here]`
 
+![Demo storyboard — the 6 scenes of the walkthrough](https://raw.githubusercontent.com/surajns0033-collab/linguapal/main/docs/demo.svg)
+
 Deployed app: **`[Render URL here]`** — live on **Render**. You don't need a local
 GPU to try it: the hosted app points `LLM_BASE_URL` at **Google AI Studio's
 OpenAI-compatible endpoint, serving Gemma open weights** — so the live demo runs on
@@ -54,6 +58,8 @@ The interesting bits:
 - `app/store.py` — everything (learner, history, cards) in a single local SQLite file.
 
 ## How I Built It
+
+![How LinguaPal works — one FastAPI app, an open-weight model behind a single env-var seam](https://raw.githubusercontent.com/surajns0033-collab/linguapal/main/docs/architecture.svg)
 
 The core of LinguaPal is **an open-weight model** — during the challenge the tutor
 ran on **Gemma 3n E2B** (2.79 GB, quantised), loaded in LM Studio on my own laptop.
