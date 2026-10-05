@@ -8,10 +8,31 @@ automated from the repo.
 
 ## Step 1 — Deploy on Render (≈10 min) — *start now*
 
+### Where the key comes from
+The `LLM_API_KEY` is a **Google AI Studio** key (the app calls Gemma through
+Google's OpenAI-compatible endpoint):
+
+1. Open <https://aistudio.google.com/apikey>.
+2. Sign in with your Google account → **Create API key** → pick any project
+   (or "Create project") → copy the key (it looks like `AQ.Ab8R…`).
+3. If you already have one, it is also in the local [`../.env`](../.env) on the
+   `LLM_API_KEY=` line — but a **fresh key** is safer since this one was shared.
+
+### Where to paste it in Render
+[`../render.yaml`](../render.yaml) declares the key with `sync: false`, which
+means **Render will not store it in the repo — it asks you for it**:
+
+- **During first deploy:** after you click **Blueprint**, Render shows the
+  service's environment variables and a blank `LLM_API_KEY` input box → paste
+  the key there → **Apply / Create**.
+- **After it's live (or to change it):** Render Dashboard → click the
+  **`linguapal`** service → **Environment** (left sidebar) → find
+  `LLM_API_KEY` → **Edit** → paste value → **Save Changes** (it redeploys).
+
 1. Go to <https://dashboard.render.com> → **New +** → **Blueprint**.
 2. Connect the repo **`surajns0033-collab/linguapal`** and pick branch **`main`**.
 3. Render reads [`../render.yaml`](../render.yaml) and prompts for the one secret:
-   - **`LLM_API_KEY`** → paste your Google AI Studio key.
+   - **`LLM_API_KEY`** → paste the Google AI Studio key you copied above.
    - Everything else is pre-set:
      - `LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`
      - `LLM_MODEL=gemma-4-26b-a4b-it`
