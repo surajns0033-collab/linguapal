@@ -14,12 +14,14 @@ services:
       # Writable path inside the container (free tier has no mounted disk).
       - key: DATA_DIR
         value: /tmp/linguapal
-      # Defaults point at Groq, which serves Gemma open weights for free.
-      # Set LLM_API_KEY in the Render dashboard (it is a secret, not stored here).
+      # Google AI Studio (Gemini API) OpenAI-compatible endpoint serves Gemma
+      # open weights on the free tier -- no credit card needed. Get a key at
+      # https://aistudio.google.com/apikey and set LLM_API_KEY in the Render
+      # dashboard. Swap LLM_MODEL for another Gemma id if you prefer.
       - key: LLM_BASE_URL
-        value: https://api.groq.com/openai/v1
+        value: https://generativelanguage.googleapis.com/v1beta/openai/
       - key: LLM_MODEL
-        value: gemma2-9b-it
+        value: gemma-3-12b-it
       - key: LLM_API_KEY
         sync: false
       - key: LLM_TEMPERATURE
