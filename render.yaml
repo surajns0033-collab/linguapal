@@ -1,29 +1,30 @@
 # Render Blueprint — hosts LinguaPal's app/front end.
-# The open-weight model runs locally (or on an open-weight server you point at
-# via LLM_BASE_URL); Render serves the app so it's always reachable.
+# The open-weight model runs on an OpenAI-compatible provider (Render has no
+# GPU); Render serves the app so it is always reachable.
 services:
   - type: web
     name: linguapal
     runtime: docker
     dockerfilePath: ./Dockerfile
-    plan: free
+    # Starter keeps the service always-on (no cold starts) and allows a disk,
+    # so a learner's progress survives deploys. Switch to "free" to save credit
+    # (Free sleeps after 15 min and cannot mount a disk).
+    plan: starter
     healthCheckPath: /api/health
-    # NOTE: persistent disks are not available on the Free plan. On Free, the
-    # SQLite file lives on the container filesystem and resets on each deploy.
-    # If you want progress to persist, upgrade to a paid instance and uncomment:
-    # disk:
-    #   name: linguapal-data
-    #   mountPath: /data
-    #   sizeGB: 1
+    disk:
+      name: linguapal-data
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: DATA_DIR
         value: /data
-      # Point these at your open-weight inference server (leave base URL blank
-      # to auto-detect a local LM Studio / Ollama during local development).
+      # Defaults point at Groq, which serves Gemma open weights for free.
+      # Set LLM_API_KEY in the Render dashboard (it is a secret, not stored here).
+      # To use local LM Studio/Ollama instead, override base URL + model.
       - key: LLM_BASE_URL
-        sync: false
+        value: https://api.groq.com/openai/v1
       - key: LLM_MODEL
-        sync: false
+        value: gemma2-9b-it
       - key: LLM_API_KEY
         sync: false
       - key: LLM_TEMPERATURE
