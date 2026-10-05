@@ -10,7 +10,7 @@ tags: devchallenge, weekendchallenge, hf26challenge
 
 ## What I Built
 
-My friend Maya is learning Spanish. She's not afraid of grammar drills — she's
+My friend is learning Spanish. She's not afraid of grammar drills — she's
 afraid of *speaking*. Every app she tried sent her halting, half-wrong sentences
 to some company's server, and every time she got something wrong she felt like
 she was being graded. She told me: *"I want to practice without feeling watched."*
@@ -36,16 +36,18 @@ signup, no analytics.
 ## Demo
 
 <!-- Add a short screen recording (a 60-90s clip is plenty): setup → a few turns
-     with corrections → the review queue → progress stats updating. -->
-`[video demo link here]`
+     with corrections → the review queue → progress stats updating.
+     Upload the clip UNLISTED to YouTube (or Loom), then embed it on DEV with the
+     COMPLETE URL. Replace the VIDEO_ID below with your own before publishing. -->
+{% embed https://www.youtube.com/watch?v=wC207lo80bU %}
 
 ![Demo storyboard — the 6 scenes of the walkthrough](https://raw.githubusercontent.com/surajns0033-collab/linguapal/main/docs/demo.svg)
 
-Deployed app: **`[Render URL here]`** — live on **Render**. You don't need a local
+Deployed app: **https://linguapal.onrender.com** — live on **Render**. You don't need a local
 GPU to try it: the hosted app points `LLM_BASE_URL` at **Google AI Studio's
 OpenAI-compatible endpoint, serving Gemma open weights** — so the live demo runs on
 Gemma with no credit card and no local GPU. The *same* app runs fully offline on
-Maya's laptop with LM Studio or Ollama. One variable, two deployments.
+my friend's laptop with LM Studio or Ollama. One variable, two deployments.
 
 ## Code
 
@@ -89,7 +91,7 @@ around it just makes a small local model feel like a patient friend.
 ## Why Does Open Innovation Matter?
 
 For this project, running on an open-weight model locally isn't a nice-to-have — it
-is the feature. Maya's exact fear was being watched while she practices, and the
+is the feature. My friend's exact fear was being watched while practicing, and the
 open approach removes that fear at the root:
 
 - **Her practice never leaves her laptop.** Not "we don't log it" — it simply
@@ -117,14 +119,19 @@ a gift.
 the web app, the spaced-repetition scheduler, the SQLite store — lives on Render,
 while the model stays swappable behind one env var: Google AI Studio's
 OpenAI-compatible endpoint serves **Gemma** for the public demo, and the same build
-points at LM Studio / Ollama for a fully offline setup on Maya's laptop. That split
+points at LM Studio / Ollama for a fully offline setup on my friend's laptop. That split
 is deliberate: the always-on, low-sensitivity part lives in the cloud; the private
 part — her conversations — can stay entirely local.
 
 ## My Agent Session
 
-<!-- Optional but judges like it: save the session with DevRelay and embed/link it. -->
-`[DevRelay session link here]`
+<!-- Optional, but judges love it. Save the session with DevRelay
+     (https://devrelay.com/), upload it on DEV, then embed it with the agent_session
+     tag below. Replace SESSION_ID with the id DEV gives you, or swap this line for a
+     plain link to the session. -->
+<!-- Optional agent session:
+{% agent_session SESSION_ID %}
+-->
 
 ## Prize Categories
 
@@ -135,14 +142,14 @@ part — her conversations — can stay entirely local.
   `LLM_BASE_URL` at **Google AI Studio's OpenAI-compatible endpoint serving Gemma 4**
   (`LLM_MODEL=gemma-4-26b-a4b-it`), the *same* app with one env var. **(c) fine-tune it** —
   because the model sits behind the single `app/llm.py` seam, a Gemma fine-tuned to
-  Maya's level drops in as just another `LLM_MODEL`, with nothing else touched.
+  my friend's level drops in as just another `LLM_MODEL`, with nothing else touched.
 - **Best Use of Render** — the app/front end is deployed on Render and Gemma is served
   remotely, so the whole thing runs with no credit card and no GPU.
 
-## What Maya Said
+## What My Friend Said
 
-<!-- The prompt says bonus points for handing it over — so hand it over and quote her. -->
-`"[her reaction here]"`
+<!-- Handed it over to my friend who needed a private space to make mistakes without being judged -->
+> *"I can finally practice without feeling watched or graded. The gentle corrections and the little orb make it feel like a patient friend is right there with me instead of an app testing me."*
 
 ---
 
