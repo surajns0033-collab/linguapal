@@ -24,8 +24,10 @@ class Settings:
         self.llm_model = _get("LLM_MODEL")
         self.llm_temperature = float(_get("LLM_TEMPERATURE", "0.6") or "0.6")
         self.llm_timeout = float(_get("LLM_TIMEOUT", "120") or "120")
-        # Keep replies short so a small local model answers fast on a laptop GPU.
-        self.llm_max_tokens = int(_get("LLM_MAX_TOKENS", "180") or "180")
+        # Generous cap: Gemma 4-style models spend ~600-900 tokens on an inline
+        # <thought> block before the answer, so a small cap truncates the reply.
+        # Small local models stop at their own natural end well under this.
+        self.llm_max_tokens = int(_get("LLM_MAX_TOKENS", "2048") or "2048")
         # Optional key for a remote OpenAI-compatible open-weight endpoint (used
         # when the app is hosted and there's no local GPU). Empty for LM Studio/Ollama.
         self.llm_api_key = _get("LLM_API_KEY")

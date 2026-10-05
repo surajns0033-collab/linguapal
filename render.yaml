@@ -29,4 +29,4 @@ services:
       # Gemma 4 is a thinking model: it emits a <thought> block before answering,
       # so it needs headroom to finish thinking and still produce REPLY/VOCAB.
       - key: LLM_MAX_TOKENS
-        value: "700"
+        value: "2048"

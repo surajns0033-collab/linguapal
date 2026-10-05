@@ -136,7 +136,7 @@ All settings are optional; sensible defaults are shown. See [`.env.example`](.en
 | `LLM_API_KEY` | *(empty)* | Bearer key, only if the endpoint requires one |
 | `LLM_TEMPERATURE` | `0.6` | Sampling temperature |
 | `LLM_TIMEOUT` | `120` | Per-request timeout (seconds) |
-| `LLM_MAX_TOKENS` | `180` | Reply cap — keeps small models fast |
+| `LLM_MAX_TOKENS` | `2048` | Reply cap — headroom for a thinking model's `<thought>` block |
 | `DATA_DIR` | `./data` | Where the SQLite database lives |
 | `SENTRY_DSN` | *(empty)* | Optional error reporting |
 | `PORT` | `8000` | Server port |

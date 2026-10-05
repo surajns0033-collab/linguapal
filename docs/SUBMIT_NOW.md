@@ -15,7 +15,7 @@ automated from the repo.
    - Everything else is pre-set:
      - `LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/`
      - `LLM_MODEL=gemma-4-26b-a4b-it`
-     - `LLM_MAX_TOKENS=700`
+     - `LLM_MAX_TOKENS=2048`
      - `DATA_DIR=/tmp/linguapal`, plan **free**
 4. Click **Create** / **Apply**. Wait for the build (Docker, several minutes).
 

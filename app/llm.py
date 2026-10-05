@@ -24,8 +24,24 @@ _CANDIDATES = [
 _detected: tuple[str, str] | None = None
 
 # Some open-weight builds (e.g. Gemma 4) emit an inline reasoning block before the
-# answer. It must never reach the learner, so we strip it before parsing.
+# answer. It must never reach the learner, so we strip it before parsing. We handle
+# three shapes: a closed <thought>...</thought>, a stray closing tag, and an
+# *unclosed* <thought> (a truncated generation) whose text runs to the very end.
 _THOUGHT_RE = re.compile(r"<thought>.*?</thought>", re.DOTALL | re.IGNORECASE)
+_THOUGHT_CLOSE_RE = re.compile(r"</thought>", re.IGNORECASE)
+_THOUGHT_OPEN_RE = re.compile(r"<thought>", re.IGNORECASE)
+
+
+def _strip_thought(raw: str) -> str:
+    """Remove inline reasoning so it can never leak into the learner's view."""
+    raw = _THOUGHT_RE.sub("", raw)
+    # Trim anything tag-shaped that leaked (e.g. an unbalanced closing tag).
+    raw = _THOUGHT_CLOSE_RE.sub("", raw)
+    # If an opening tag is still present the block was never closed (truncated
+    # generation). Keep only the part *after* the last opening tag.
+    if _THOUGHT_OPEN_RE.search(raw):
+        raw = _THOUGHT_OPEN_RE.split(raw)[-1]
+    return raw.strip()
 
 
 class LLMUnavailable(RuntimeError):
@@ -62,7 +78,7 @@ def _sections(raw: str) -> dict[str, str]:
 def _parse(raw: str) -> tuple[str, list[str], list[dict]]:
     """Parse the strict REPLY/CORRECTIONS/VOCAB format the prompt asks for."""
     # Drop any inline reasoning block so it can never leak into the learner's view.
-    raw = _THOUGHT_RE.sub("", raw).strip()
+    raw = _strip_thought(raw)
     sections = _sections(raw)
     if not sections:  # no labels at all: treat the whole thing as the reply
         return raw, [], []
