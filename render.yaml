@@ -21,8 +21,12 @@ services:
       - key: LLM_BASE_URL
         value: https://generativelanguage.googleapis.com/v1beta/openai/
       - key: LLM_MODEL
-        value: gemma-3-12b-it
+        value: gemma-4-26b-a4b-it
       - key: LLM_API_KEY
         sync: false
       - key: LLM_TEMPERATURE
         value: "0.6"
+      # Gemma 4 is a thinking model: it emits a <thought> block before answering,
+      # so it needs headroom to finish thinking and still produce REPLY/VOCAB.
+      - key: LLM_MAX_TOKENS
+        value: "700"

@@ -126,8 +126,8 @@ part — her conversations — can stay entirely local.
   need *no code change* and both are wired in:
   **(a) run it locally** — during the challenge the tutor ran on **Gemma 3n E2B** in
   LM Studio on my laptop; **(b) serve it through a provider** — the live demo points
-  `LLM_BASE_URL` at **Google AI Studio's OpenAI-compatible endpoint serving Gemma**
-  (`LLM_MODEL=gemma-3-12b-it`), the *same* app with one env var. **(c) fine-tune it** —
+  `LLM_BASE_URL` at **Google AI Studio's OpenAI-compatible endpoint serving Gemma 4**
+  (`LLM_MODEL=gemma-4-26b-a4b-it`), the *same* app with one env var. **(c) fine-tune it** —
   because the model sits behind the single `app/llm.py` seam, a Gemma fine-tuned to
   Maya's level drops in as just another `LLM_MODEL`, with nothing else touched.
 - **Best Use of Render** — the app/front end is deployed on Render and Gemma is served

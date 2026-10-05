@@ -23,6 +23,10 @@ _CANDIDATES = [
 
 _detected: tuple[str, str] | None = None
 
+# Some open-weight builds (e.g. Gemma 4) emit an inline reasoning block before the
+# answer. It must never reach the learner, so we strip it before parsing.
+_THOUGHT_RE = re.compile(r"<thought>.*?</thought>", re.DOTALL | re.IGNORECASE)
+
 
 class LLMUnavailable(RuntimeError):
     """Raised when no local open-weight model server can be reached."""
@@ -57,7 +61,8 @@ def _sections(raw: str) -> dict[str, str]:
 
 def _parse(raw: str) -> tuple[str, list[str], list[dict]]:
     """Parse the strict REPLY/CORRECTIONS/VOCAB format the prompt asks for."""
-    raw = raw.strip()
+    # Drop any inline reasoning block so it can never leak into the learner's view.
+    raw = _THOUGHT_RE.sub("", raw).strip()
     sections = _sections(raw)
     if not sections:  # no labels at all: treat the whole thing as the reply
         return raw, [], []
