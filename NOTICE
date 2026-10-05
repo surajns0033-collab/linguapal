@@ -1,0 +1,37 @@
+LinguaPal
+Copyright (c) 2026 LinguaPal contributors
+Licensed under the MIT License (see LICENSE).
+
+This project's own source code is MIT-licensed. It depends on, or interacts with,
+the following third-party components, each governed by its own license:
+
+--------------------------------------------------------------------
+Runtime and libraries
+--------------------------------------------------------------------
+FastAPI            MIT License
+Uvicorn            BSD 3-Clause License
+Starlette          BSD 3-Clause License
+Pydantic           MIT License
+python-dotenv      BSD 3-Clause License
+httpx              BSD 3-Clause License
+SQLite (stdlib)    Public Domain
+
+The full text of each license ships with the corresponding package.
+
+--------------------------------------------------------------------
+Model weights (not distributed with this repository)
+--------------------------------------------------------------------
+LinguaPal does not bundle any model weights. It connects at runtime to an
+OpenAI-compatible endpoint that you provide. If you load Gemma, the
+Gemma Terms of Use apply to the weights and your use of them:
+
+    https://ai.google.dev/gemma/terms
+
+Other models (for example Llama) carry their own licenses; review them
+before use or redistribution.
+
+--------------------------------------------------------------------
+Local inference servers (optional, user-installed)
+--------------------------------------------------------------------
+LM Studio and Ollama are separate applications with their own terms.
+They are not bundled with or required by this project.

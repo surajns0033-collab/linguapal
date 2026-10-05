@@ -1,104 +1,208 @@
-# LinguaPal — a little language tutor, built for one friend
+<div align="center">
 
-LinguaPal is a small, friendly practice partner for **one real person**: my friend
-who is learning a new language and gets shy practising out loud. It runs on a
-**local open-weight model**, keeps every bit of her practice on her own machine,
-and quietly remembers the words she keeps forgetting.
+# LinguaPal
+
+**A small, patient language tutor that runs on your own machine — built for one friend.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Model](https://img.shields.io/badge/model-Gemma%203n%20E2B-orange)
+![Runs offline](https://img.shields.io/badge/runs-offline-success)
+![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)
 
 Built for the **Hacktoberfest Weekend Challenge: Build for a Friend** (Oct 2–5, 2026).
 
-## Who it's for
+</div>
 
-Someone learning a language who wants a patient partner that never gets tired and
-never sends their mistakes to a company's server. You point it at their level, and
-it just chats — gently correcting, feeding back the words they lapse on, and
-tracking what's actually sticking.
+LinguaPal is a language-practice partner for **one real person** — my friend, who is
+learning a new language and gets nervous about making mistakes. It chats with her at
+her level, corrects her gently with a short explanation, turns new words into
+flashcards automatically, and schedules those cards for review. Everything runs on a
+**local open-weight model**, and her practice never leaves her machine.
 
-## What it does
+---
 
-- **Conversation practice** in the target language, tuned to beginner/intermediate/advanced.
-- **Gentle corrections** parsed out of the model's reply (never mocked, always explained).
+## Contents
+
+- [The idea](#the-idea)
+- [Features](#features)
+- [How it works](#how-it-works)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+- [Configuration](#configuration)
+- [Project structure](#project-structure)
+- [HTTP API](#http-api)
+- [Deployment](#deployment)
+- [Why open weights](#why-open-weights)
+- [License](#license)
+
+---
+
+## The idea
+
+Most practice apps send every half-wrong sentence to a company's server, and grade it.
+For a shy learner that is the worst possible design: the fear of being watched is
+stronger than the fear of being wrong.
+
+LinguaPal inverts that. The model runs locally, nothing is uploaded, and the feedback
+is phrased like a friend — *"you wrote `yo soy cansado`; for a state like this it's
+`estoy cansado`"* — never a red mark. The goal isn't to test her; it's to make her
+comfortable enough to keep going.
+
+## Features
+
+- **Conversation practice** in the target language, tuned to beginner / intermediate / advanced.
+- **Gentle corrections** parsed out of the model's reply — explained in one line, never mocked.
 - **Automatic vocabulary cards** — every new word the tutor introduces becomes a review card.
-- **Spaced repetition review** (a small SM-2 scheduler) so the words come back at the right time.
-- **Progress that means something** — retention %, cards due now, matured cards, turns practised.
-- **A durable memory of weak spots** — terms the learner keeps lapsing on are woven back into future prompts.
-- **A friendly companion mood** — the orb, colours, and emoji reactions make it feel like a pal, not a grader.
+- **Spaced repetition** (a small SM-2 scheduler) so words come back at the right time.
+- **Meaningful progress** — retention %, cards due now, matured cards, turns practised.
+- **Memory of weak spots** — terms the learner keeps lapsing on are woven back into later prompts.
+- **A companion orb** — a small mood indicator (thinking / happy / gently-correcting) that
+  makes the tutor feel like a pal rather than a grader.
 
-## Why open innovation matters here
-
-LinguaPal's core is an **open-weight model** served locally. That is not a detail —
-it is the whole point, and it is what a closed API could not give us:
-
-- **Private by default.** A beginner's halting sentences are exactly the kind of thing
-  people don't want on someone else's server. Everything lives in one local SQLite file.
-- **Runs on a laptop, even offline.** Language practice on a train or a flight still works.
-- **Zero marginal cost.** Practice as much as you like; there is no per-token bill, which
-  matters for a friend who would feel guilty "using up" an API.
-- **Swappable models — and a swappable place to run them.** The same app drives Gemma,
-  Llama, or Qwen — LM Studio or Ollama locally, or any OpenAI-compatible open-weight
-  endpoint when hosted (`LLM_BASE_URL` + optional `LLM_API_KEY`). One env var moves it
-  from a laptop to the cloud; no closed API is ever in the loop.
-- **Yours to change.** The prompt, the scheduler, the UI — all forks of a friend's gift,
-  not a locked product.
-
-## Architecture
+## How it works
 
 ```
-Browser (static/, no framework)  ──►  FastAPI (app/main.py)
-                                        ├─ llm.py     → OpenAI-compatible endpoint
-                                        │              (LM Studio :1234, Ollama :11434,
-                                        │               or a hosted open-weight server)
-                                        ├─ prompts.py → tutor + drill prompts
-                                        ├─ store.py   → SQLite: learner, messages, cards
-                                        └─ srs.py     → spaced-repetition scheduler
+Browser (plain HTML/CSS/JS)  ──►  FastAPI (app/main.py)
+                                   ├─ llm.py      → OpenAI-compatible endpoint
+                                   │                (LM Studio :1234, Ollama :11434,
+                                   │                 or any hosted open-weight server)
+                                   ├─ prompts.py  → tutor + drill prompts
+                                   ├─ store.py    → SQLite: learner, messages, cards
+                                   └─ srs.py      → spaced-repetition scheduler
 ```
 
-An OpenAI-compatible endpoint is used — a local one by default (LM Studio/Ollama),
-or a remote open-weight endpoint when deployed. The open-weight model is a swappable
-component, not a hard dependency on any vendor.
+The key design choice: the model is treated as a **component, not an oracle**. The
+prompt asks for a strict three-part reply — the conversation, a list of corrections,
+and any new vocabulary — and `llm.py` parses that into structured data. One inference
+call yields the reply, the feedback, *and* the flashcards. The scheduler lives in plain
+Python, so progress is deterministic and instant even on a small model.
 
-## Run it locally
+The app talks to any **OpenAI-compatible** endpoint. Locally that's LM Studio or
+Ollama; when hosted, it's a remote open-weight endpoint. The model stays swappable —
+no closed API is ever in the loop.
 
-1. **Start an open-weight model.** Either:
-   - **LM Studio**: load a small model (developed and demoed on `google/gemma-3n-e2b`; `google/gemma-3-4b` or `llama-3.2-3b` also work), then Developer → **Start Server** (port 1234), or
-   - **Ollama**: `ollama serve` and `ollama pull gemma3:4b`.
-2. **Install and run:**
+## Tech stack
 
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate        # Windows (macOS/Linux: source .venv/bin/activate)
-   pip install -r requirements.txt
-   copy .env.example .env        # then edit if needed
-   uvicorn app.main:app --reload --port 8000
-   ```
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Model | Gemma 3n E2B (open weights) | Small enough to run on a laptop, capable enough to tutor |
+| Inference | LM Studio / Ollama (OpenAI-compatible) | One interop layer, many models |
+| Backend | FastAPI + Uvicorn | Small, typed, async |
+| Storage | SQLite (stdlib) | Single local file, zero setup |
+| Frontend | Plain HTML/CSS/JS | No build step, easy to fork |
+| Hosting | Render (Docker) | One-click deploy for the hosted demo |
 
-3. Open <http://localhost:8000>, tell it who you're helping, and start practising.
+## Getting started
 
-Auto-detection tries LM Studio, then Ollama. Override with `LLM_BASE_URL` / `LLM_MODEL`
-in `.env` for any other OpenAI-compatible open-weight server.
+### 1. Start an open-weight model
 
-## Hosted mode (Render — Best Use of Render)
+Pick either:
 
-Render hosts the **app/front end**; the open-weight model can run locally on the
-learner's machine or on any open-weight server you point at:
+- **LM Studio** — load a small model (developed and demoed on `google/gemma-3n-e2b`;
+  `google/gemma-3-4b-it` or `meta-llama/llama-3.2-3b-instruct` also work), then
+  *Developer → Start Server* (port `1234`).
+- **Ollama** — `ollama serve` and `ollama pull gemma3:4b`.
 
-- Set `LLM_BASE_URL` to that server's `/v1` URL, `LLM_MODEL` to its model id, and
-  `LLM_API_KEY` if the endpoint requires one — so the hosted app works with no local GPU.
-- Deploy the repo to Render as a **Web Service** (Dockerfile included, see `render.yaml`).
-- Set `DATA_DIR` to a mounted disk if you want review history to persist.
+### 2. Run the app
 
-This keeps the friend's data under their control while the app is always reachable.
+```bash
+python -m venv .venv
+.venv\Scripts\activate          # Windows  (macOS/Linux: source .venv/bin/activate)
+pip install -r requirements.txt
+copy .env.example .env          # then edit if needed   (macOS/Linux: cp)
+uvicorn app.main:app --reload --port 8000
+```
 
-## Partner categories entered
+Open <http://localhost:8000>, tell it who you're helping, and start practising.
 
-- **Best Use of Gemma** — Gemma is the tutor's core, run locally (LM Studio/Ollama) or
-  served through any OpenAI-compatible provider: one env var swaps it, no code change.
-- **Best Use of Render** — the app/front end is deployed on Render.
+> Auto-detection tries LM Studio first, then Ollama. Point `LLM_BASE_URL` / `LLM_MODEL`
+> at any other OpenAI-compatible server to override.
 
 ## Configuration
 
-See [`.env.example`](.env.example). Nothing is required beyond a running local model.
+All settings are optional; sensible defaults are shown. See [`.env.example`](.env.example).
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `LLM_BASE_URL` | auto-detected | Base URL of the OpenAI-compatible endpoint (`…/v1`) |
+| `LLM_MODEL` | auto-detected | Model id to request |
+| `LLM_API_KEY` | *(empty)* | Bearer key, only if the endpoint requires one |
+| `LLM_TEMPERATURE` | `0.6` | Sampling temperature |
+| `LLM_TIMEOUT` | `120` | Per-request timeout (seconds) |
+| `LLM_MAX_TOKENS` | `180` | Reply cap — keeps small models fast |
+| `DATA_DIR` | `./data` | Where the SQLite database lives |
+| `SENTRY_DSN` | *(empty)* | Optional error reporting |
+| `PORT` | `8000` | Server port |
+
+## Project structure
+
+```
+linguapal/
+├─ app/
+│  ├─ main.py        FastAPI app + routes
+│  ├─ config.py      environment-driven settings
+│  ├─ llm.py         OpenAI-compatible client + reply parser
+│  ├─ prompts.py     tutor and drill prompts
+│  ├─ store.py       SQLite persistence (learner, messages, cards)
+│  └─ srs.py         spaced-repetition scheduler
+├─ static/
+│  ├─ index.html     single page
+│  ├─ app.js         UI logic
+│  └─ style.css      styles
+├─ smoke_test.py     end-to-end check against a running server
+├─ Dockerfile        container build
+├─ render.yaml       Render blueprint
+├─ requirements.txt
+├─ .env.example
+└─ LICENSE
+```
+
+## HTTP API
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/api/health` | App status + detected model |
+| `GET` | `/api/learner` | Current learner + stats |
+| `POST` | `/api/setup` | Create the learner (name, language, level) |
+| `POST` | `/api/chat` | One tutor turn → reply, corrections, vocab |
+| `GET` | `/api/drill?topic=…` | Start a themed practice prompt |
+| `GET` | `/api/review` | Cards due now |
+| `POST` | `/api/review` | Grade a card (SM-2 update) |
+| `GET` | `/api/stats` | Progress summary |
+| `POST` | `/api/reset` | Clear local practice history |
+
+## Deployment
+
+The app and front end can be hosted on **Render** while the model runs wherever you
+point it — a laptop, a home server, or a hosted open-weight endpoint.
+
+1. Push the repo and create a Render **Web Service** (the `Dockerfile` and `render.yaml` are included).
+2. Set `LLM_BASE_URL` to your endpoint's `/v1` URL, `LLM_MODEL` to its model id, and
+   `LLM_API_KEY` if required — this lets the hosted app run with **no local GPU**.
+3. Optionally mount a disk and set `DATA_DIR` so review history persists across deploys.
+
+## Why open weights
+
+This isn't a detail — it's the feature:
+
+- **Private by default.** A beginner's halting sentences shouldn't sit on someone else's
+  server. Everything lives in one local SQLite file.
+- **Works offline.** Practice on a train or a flight.
+- **No per-token bill.** She can make a hundred mistakes without feeling she's "using up" an API.
+- **Swappable — model *and* host.** Gemma today, Llama or Qwen tomorrow; on a laptop tonight,
+  on a hosted endpoint when she wants a public link. One env var, no code change.
+- **Yours to change.** The prompt, the scheduler, the UI — all editable.
 
 ## License
 
-MIT — fork it, adapt it, give it to your own friend.
+Released under the [MIT License](LICENSE) — the code is free to use, modify, and share.
+
+> Note: the **model weights** are governed by their own licenses (for example, the
+> Gemma Terms of Use), which are separate from this project's MIT license.
+
+## Acknowledgements
+
+- [Google Gemma](https://ai.google.dev/gemma) — the open-weight model behind the tutor.
+- [LM Studio](https://lmstudio.ai/) and [Ollama](https://ollama.com/) — local inference.
+- [FastAPI](https://fastapi.tiangolo.com/) and [Uvicorn](https://www.uvicorn.org/).
