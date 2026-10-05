@@ -38,9 +38,10 @@ signup, no analytics.
 `[video demo link here]`
 
 Deployed app: **`[Render URL here]`** — live on **Render**. You don't need a local
-GPU to try it: the hosted app points `LLM_BASE_URL` at an OpenAI-compatible
-**open-weight** endpoint (any served Gemma/Llama/Qwen), and the same app runs fully
-offline on Maya's laptop with LM Studio or Ollama. One variable, two deployments.
+GPU to try it: the hosted app points `LLM_BASE_URL` at **Google AI Studio's
+OpenAI-compatible endpoint, serving Gemma open weights** — so the live demo runs on
+Gemma with no credit card and no local GPU. The *same* app runs fully offline on
+Maya's laptop with LM Studio or Ollama. One variable, two deployments.
 
 ## Code
 
@@ -106,10 +107,13 @@ A closed API would have made this an app about a subscription. Open weights made
 a gift.
 
 **Deployment (Best Use of Render):** the FastAPI app and front end are deployed on
-**Render**, so the app is always reachable, while the open-weight model runs on the
-learner's own machine (or any open-weight server you point `LLM_BASE_URL` at). That
-split is deliberate: the always-on, low-sensitivity part lives in the cloud; the
-private part — her conversations — stays local.
+**Render** on the free plan, with no credit card and no GPU. The always-on part —
+the web app, the spaced-repetition scheduler, the SQLite store — lives on Render,
+while the model stays swappable behind one env var: Google AI Studio's
+OpenAI-compatible endpoint serves **Gemma** for the public demo, and the same build
+points at LM Studio / Ollama for a fully offline setup on Maya's laptop. That split
+is deliberate: the always-on, low-sensitivity part lives in the cloud; the private
+part — her conversations — can stay entirely local.
 
 ## My Agent Session
 
@@ -118,15 +122,16 @@ private part — her conversations — stays local.
 
 ## Prize Categories
 
-- **Best Use of Gemma** — Gemma is the tutor's core. The challenge allows three ways
-  to use it, and LinguaPal is built so the first two need *no code change*:
-  **(a) run it locally** — the demo ran on **Gemma 3n E2B** in LM Studio on my laptop;
-  **(b) serve it through a provider** — point `LLM_BASE_URL` at any OpenAI-compatible
-  open-weight endpoint (e.g. a served Gemma on Google Cloud or another provider) and the
-  same app runs hosted. **(c) fine-tune it** — because the model sits behind the single
-  `app/llm.py` seam, a Gemma fine-tuned to Maya's level drops in as just another
-  `LLM_MODEL`, with nothing else in the app touched.
-- **Best Use of Render** — the app/front end is deployed on Render.
+- **Best Use of Gemma** — Gemma is the tutor's core. Two of the three allowed paths
+  need *no code change* and both are wired in:
+  **(a) run it locally** — during the challenge the tutor ran on **Gemma 3n E2B** in
+  LM Studio on my laptop; **(b) serve it through a provider** — the live demo points
+  `LLM_BASE_URL` at **Google AI Studio's OpenAI-compatible endpoint serving Gemma**
+  (`LLM_MODEL=gemma-3-12b-it`), the *same* app with one env var. **(c) fine-tune it** —
+  because the model sits behind the single `app/llm.py` seam, a Gemma fine-tuned to
+  Maya's level drops in as just another `LLM_MODEL`, with nothing else touched.
+- **Best Use of Render** — the app/front end is deployed on Render and Gemma is served
+  remotely, so the whole thing runs with no credit card and no GPU.
 
 ## What Maya Said
 
