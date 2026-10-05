@@ -33,6 +33,9 @@ own laptop. It:
 The whole thing is one FastAPI app and a page of plain JavaScript. No account, no
 signup, no analytics.
 
+### Her Reaction
+> *"I can finally practice without feeling watched or graded. The gentle corrections and the little orb make it feel like a patient friend is right there with me instead of an app testing me."*
+
 ## Demo
 
 <!-- Add a short screen recording (a 60-90s clip is plenty): setup → a few turns
@@ -50,6 +53,8 @@ Gemma with no credit card and no local GPU. The *same* app runs fully offline on
 my friend's laptop with LM Studio or Ollama. One variable, two deployments.
 
 ## Code
+
+{% embed https://github.com/surajns0033-collab/linguapal %}
 
 [github.com/surajns0033-collab/linguapal](https://github.com/surajns0033-collab/linguapal) — MIT licensed.
 
@@ -145,11 +150,6 @@ part — her conversations — can stay entirely local.
   my friend's level drops in as just another `LLM_MODEL`, with nothing else touched.
 - **Best Use of Render** — the app/front end is deployed on Render and Gemma is served
   remotely, so the whole thing runs with no credit card and no GPU.
-
-## What My Friend Said
-
-<!-- Handed it over to my friend who needed a private space to make mistakes without being judged -->
-> *"I can finally practice without feeling watched or graded. The gentle corrections and the little orb make it feel like a patient friend is right there with me instead of an app testing me."*
 
 ---
 
