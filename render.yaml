@@ -8,10 +8,13 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     healthCheckPath: /api/health
-    disk:
-      name: linguapal-data
-      mountPath: /data
-      sizeGB: 1
+    # NOTE: persistent disks are not available on the Free plan. On Free, the
+    # SQLite file lives on the container filesystem and resets on each deploy.
+    # If you want progress to persist, upgrade to a paid instance and uncomment:
+    # disk:
+    #   name: linguapal-data
+    #   mountPath: /data
+    #   sizeGB: 1
     envVars:
       - key: DATA_DIR
         value: /data
