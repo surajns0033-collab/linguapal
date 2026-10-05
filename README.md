@@ -12,6 +12,8 @@
 
 Built for the **Hacktoberfest Weekend Challenge: Build for a Friend** (Oct 2–5, 2026).
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/surajns0033-collab/linguapal)
+
 </div>
 
 LinguaPal is a language-practice partner for **one real person** — my friend, who is
