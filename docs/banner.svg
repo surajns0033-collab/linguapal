@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-label="LinguaPal — a small, patient language tutor you can run yourself">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.28" r="0.6">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb" cx="0.5" cy="0.42" r="0.6">
+      <stop offset="0" stop-color="#7dd3fc"/>
+      <stop offset="0.6" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <rect width="1200" height="400" fill="url(#glow)"/>
+
+  <!-- dotted grid -->
+  <g fill="#334155" opacity="0.55">
+    <circle cx="80" cy="60" r="2"/><circle cx="140" cy="60" r="2"/><circle cx="200" cy="60" r="2"/>
+    <circle cx="80" cy="120" r="2"/><circle cx="140" cy="120" r="2"/><circle cx="200" cy="120" r="2"/>
+    <circle cx="80" cy="180" r="2"/><circle cx="140" cy="180" r="2"/><circle cx="200" cy="180" r="2"/>
+  </g>
+
+  <!-- companion orb -->
+  <circle cx="925" cy="200" r="120" fill="#0ea5e9" opacity="0.18"/>
+  <circle cx="925" cy="200" r="88" fill="url(#orb)"/>
+  <circle cx="895" cy="182" r="12" fill="#0b1220"/>
+  <circle cx="955" cy="182" r="12" fill="#0b1220"/>
+  <path d="M888 226 q37 34 74 0" stroke="#0b1220" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+  <!-- text -->
+  <text x="80" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#f8fafc">LinguaPal</text>
+  <text x="80" y="205" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="27" fill="#cbd5e1">A small, patient language tutor you can run yourself.</text>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="19">
+    <rect x="80" y="248" rx="16" ry="16" width="196" height="38" fill="#0ea5e9" opacity="0.18" stroke="#38bdf8"/>
+    <text x="105" y="273" fill="#7dd3fc">Open-weight · Gemma</text>
+
+    <rect x="290" y="248" rx="16" ry="16" width="168" height="38" fill="#22c55e" opacity="0.15" stroke="#22c55e"/>
+    <text x="315" y="273" fill="#86efac">Runs offline</text>
+
+    <rect x="472" y="248" rx="16" ry="16" width="176" height="38" fill="#a855f7" opacity="0.15" stroke="#a855f7"/>
+    <text x="497" y="273" fill="#d8b4fe">Spaced repetition</text>
+  </g>
+
+  <text x="80" y="345" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#64748b">Built for one friend · Hacktoberfest Weekend Challenge · Oct 2026</text>
+</svg>

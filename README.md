@@ -4,9 +4,11 @@
 
 **A small, patient language tutor that runs on your own machine — built for one friend.**
 
+<img src="docs/banner.svg" alt="LinguaPal — a small, patient language tutor you can run yourself" width="100%">
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Model](https://img.shields.io/badge/model-Gemma%203n%20E2B-orange)
+![Model](https://img.shields.io/badge/model-Gemma%204-orange)
 ![Runs offline](https://img.shields.io/badge/runs-offline-success)
 ![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)
 
@@ -64,6 +66,8 @@ comfortable enough to keep going.
 
 ## How it works
 
+<img src="docs/architecture.svg" alt="Architecture: browser to FastAPI, with a swappable open-weight model behind one env-var seam" width="100%">
+
 ```
 Browser (plain HTML/CSS/JS)  ──►  FastAPI (app/main.py)
                                    ├─ llm.py      → OpenAI-compatible endpoint
@@ -88,8 +92,8 @@ no closed API is ever in the loop.
 
 | Layer | Choice | Why |
 | --- | --- | --- |
-| Model | Gemma 3n E2B (open weights) | Small enough to run on a laptop, capable enough to tutor |
-| Inference | LM Studio / Ollama (OpenAI-compatible) | One interop layer, many models |
+| Model | Gemma (open weights) — `gemma-4-26b-a4b-it` hosted, Gemma 3n E2B / Gemma 3 4B locally | Small enough to run on a laptop, capable enough to tutor |
+| Inference | LM Studio / Ollama locally, Google AI Studio (Gemma) when hosted — all OpenAI-compatible | One interop layer, many models |
 | Backend | FastAPI + Uvicorn | Small, typed, async |
 | Storage | SQLite (stdlib) | Single local file, zero setup |
 | Frontend | Plain HTML/CSS/JS | No build step, easy to fork |

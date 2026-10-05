@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="LinguaPal 6-scene demo storyboard">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#111c2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#bg)"/>
+  <text x="40" y="52" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#f8fafc">Demo storyboard · 60–90s</text>
+  <text x="40" y="82" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" fill="#94a3b8">Screen-record the live app (phone is fine). Order of scenes for the submission video.</text>
+
+  <!-- helpers via repeated groups -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <!-- 1 -->
+    <rect x="40" y="120" rx="14" width="360" height="150" fill="#0ea5e9" opacity="0.12" stroke="#38bdf8"/>
+    <text x="64" y="156" font-size="18" font-weight="700" fill="#7dd3fc">1 · Setup</text>
+    <text x="64" y="188" font-size="15" fill="#e2e8f0">Type name "Maya", language Spanish,</text>
+    <text x="64" y="212" font-size="15" fill="#e2e8f0">level beginner → start.</text>
+    <text x="64" y="246" font-size="13" fill="#94a3b8">~8s · no signup, no account</text>
+
+    <!-- 2 -->
+    <rect x="420" y="120" rx="14" width="360" height="150" fill="#6366f1" opacity="0.12" stroke="#818cf8"/>
+    <text x="444" y="156" font-size="18" font-weight="700" fill="#a5b4fc">2 · First drill</text>
+    <text x="444" y="188" font-size="15" fill="#e2e8f0">Topic "ordering coffee" → tutor opens</text>
+    <text x="444" y="212" font-size="15" fill="#e2e8f0">in Spanish and asks a question.</text>
+    <text x="444" y="246" font-size="13" fill="#94a3b8">~12s · model = Gemma</text>
+
+    <!-- 3 -->
+    <rect x="800" y="120" rx="14" width="360" height="150" fill="#22c55e" opacity="0.12" stroke="#22c55e"/>
+    <text x="824" y="156" font-size="18" font-weight="700" fill="#86efac">3 · Gentle correction</text>
+    <text x="824" y="188" font-size="15" fill="#e2e8f0">Type "yo soy cansado" → reply shows</text>
+    <text x="824" y="212" font-size="15" fill="#e2e8f0">"estoy cansado (use estar for states)".</text>
+    <text x="824" y="246" font-size="13" fill="#94a3b8">~18s · highlight this scene</text>
+
+    <!-- 4 -->
+    <rect x="40" y="300" rx="14" width="360" height="150" fill="#f59e0b" opacity="0.12" stroke="#f59e0b"/>
+    <text x="64" y="336" font-size="18" font-weight="700" fill="#fcd34d">4 · Auto flashcards</text>
+    <text x="64" y="368" font-size="15" fill="#e2e8f0">New words become cards with no</text>
+    <text x="64" y="392" font-size="15" fill="#e2e8f0">extra tap.</text>
+    <text x="64" y="426" font-size="13" fill="#94a3b8">~10s · vocabulary sidebar</text>
+
+    <!-- 5 -->
+    <rect x="420" y="300" rx="14" width="360" height="150" fill="#a855f7" opacity="0.12" stroke="#a855f7"/>
+    <text x="444" y="336" font-size="18" font-weight="700" fill="#d8b4fe">5 · Review queue</text>
+    <text x="444" y="368" font-size="15" fill="#e2e8f0">Cards come back on a spaced-</text>
+    <text x="444" y="392" font-size="15" fill="#e2e8f0">repetition schedule. Rate one.</text>
+    <text x="444" y="426" font-size="13" fill="#94a3b8">~15s · SRS in plain Python</text>
+
+    <!-- 6 -->
+    <rect x="800" y="300" rx="14" width="360" height="150" fill="#ef4444" opacity="0.12" stroke="#ef4444"/>
+    <text x="824" y="336" font-size="18" font-weight="700" fill="#fca5a5">6 · Progress + close</text>
+    <text x="824" y="368" font-size="15" fill="#e2e8f0">Retention %, cards due, turns.</text>
+    <text x="824" y="392" font-size="15" fill="#e2e8f0">End card: "open weights, runs offline".</text>
+    <text x="824" y="426" font-size="13" fill="#94a3b8">~10s · logo close</text>
+  </g>
+
+  <rect x="40" y="500" rx="14" width="1120" height="150" fill="#0f172a" stroke="#334155"/>
+  <text x="64" y="536" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#f8fafc">Recording tips</text>
+  <text x="64" y="570" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#cbd5e1">• Record one continuous take; narrate over it or add captions.</text>
+  <text x="64" y="596" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#cbd5e1">• Zoom the chat panel so corrections are legible.</text>
+  <text x="64" y="622" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#cbd5e1">• Upload unlisted to YouTube (or attach to the DEV post) and paste the link in SUBMISSION.md.</text>
+</svg>
